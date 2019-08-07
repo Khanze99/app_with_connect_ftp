@@ -3,7 +3,7 @@ import getpass
 import threading
 
 CONFIG = {}
-COMMANDS = {'/help': '1. </connect> - connect to ftp example \n2. </copy TO FROM>\n3. /exit ',
+COMMANDS = {'/help': '1. </connect> - connect to ftp example \n2. </copy FROM TO>\n3. /exit ',
             '/connect': '',
             '/copy': '',
             '/exit': ''}
