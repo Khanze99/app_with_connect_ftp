@@ -6,28 +6,26 @@ import time
 
 CHECK = False
 TURN_LIST = []
-logger.add('ftp_connect.log')
-# host = "127.0.0.1"
-# user = "-"
-# password = "-"
+# logger.add('ftp_connect.log')
 
 
-def parse_config():
+def parse_config():  # Парсим config
     while True:
         if len(TURN_LIST) == 0:
             time.sleep(5)
         for item in TURN_LIST:
             try:
                 with open(command, mode='r') as config:
-                    logger.debug("Read config")
+                    # logger.debug("Read config")
                     data = json.load(config)
             except FileNotFoundError:
-                logger.debug("I can not find the config")
+                pass
+                # logger.debug("I can not find the config")
             copy_local_to_server(**data)
             TURN_LIST.remove(item)
 
 
-def copy_local_to_server(**data):
+def copy_local_to_server(**data):  # Copy to the server
     host = data['host']
     from_path = data['from_path']
     to_path = data['to_path']
@@ -35,16 +33,17 @@ def copy_local_to_server(**data):
         valid_open = open(from_path, mode="r")
         valid_open.close()
     except FileNotFoundError:
-        logger.debug("Can not find the file")
+        # logger.debug("Can not find the file")
         return False
     try:
         with pysftp.Connection(host=host, username=data['username'], password=data['password']) as ftp:
-            logger.debug('Connect to {}'.format(host))
+            # logger.debug('Connect to {}'.format(host))
             ftp.put(from_path, to_path)
     except FileNotFoundError:
-        logger.debug("Can not find path to save on the server")
+        # logger.debug("Can not find path to save on the server")
         with pysftp.Connection(host=host, username=data['username'], password=data['password']) as ftp:
-            logger.debug('Connect to {}'.format(host))
+            # logger.debug('Connect to {}'.format(host))
+            # Если не находит директорию на сервере, создаем свою папку и туда сохраняем наши файлы
             file = from_path.split('/')[-1]
             ftp_dir = "ftp_files"
             pwd = ftp.pwd + '/'
@@ -53,7 +52,7 @@ def copy_local_to_server(**data):
             if ftp_dir not in list_dirs:
                 ftp.mkdir(ftp_dir)
             ftp.put(from_path, to_save)
-        logger.debug('Save to {}'.format(to_save))
+        # logger.debug('Copy to server dir - {}\n'.format(to_save))
 
 
 if __name__ == "__main__":
@@ -69,8 +68,7 @@ if __name__ == "__main__":
             CHECK = True
         command = input('Enter the path to the config or input /exit: ')
         if command == '/exit':
-            logger.debug("Good bye :)")
-            thread.join()
+            # logger.debug("Good bye :)")
             break
         else:
             TURN_LIST.append(command)
