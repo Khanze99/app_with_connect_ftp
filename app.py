@@ -1,27 +1,30 @@
 from loguru import logger
 import pysftp
-import getpass
 import threading
 import json
-
+import time
 
 CHECK = False
 TURN_LIST = []
-
+logger.add('ftp_connect.log')
 # host = "127.0.0.1"
 # user = "-"
 # password = "-"
 
 
-def parse_config(command):
-    try:
-        with open(command, mode='r') as config:
-            logger.debug("Read config")
-            data = json.load(config)
-    except FileNotFoundError:
-        logger.debug("I can not find the config")
-        return False
-    copy_local_to_server(**data)
+def parse_config():
+    while True:
+        if len(TURN_LIST) == 0:
+            time.sleep(5)
+        for item in TURN_LIST:
+            try:
+                with open(command, mode='r') as config:
+                    logger.debug("Read config")
+                    data = json.load(config)
+            except FileNotFoundError:
+                logger.debug("I can not find the config")
+            copy_local_to_server(**data)
+            TURN_LIST.remove(item)
 
 
 def copy_local_to_server(**data):
@@ -50,11 +53,13 @@ def copy_local_to_server(**data):
             if ftp_dir not in list_dirs:
                 ftp.mkdir(ftp_dir)
             ftp.put(from_path, to_save)
-        logger.debug('Save to {}'.format(to_path))
+        logger.debug('Save to {}'.format(to_save))
 
 
 if __name__ == "__main__":
-    while True:
+    thread = threading.Thread(target=parse_config, name='thread 2')
+    thread.start()
+    while True:  # Thread 1
         if CHECK is False:
             print("-----------------------------HELLO-------------------------------\n"
                   ".................Enter the path to the config....................\n"
@@ -63,14 +68,13 @@ if __name__ == "__main__":
                   "...........--------------------------------------------..........")
             CHECK = True
         command = input('Enter the path to the config or input /exit: ')
-
         if command == '/exit':
             logger.debug("Good bye :)")
+            thread.join()
             break
         else:
-            logger.debug("Parse config")
-            if parse_config(command) is False:
-                continue
+            TURN_LIST.append(command)
+
 
 
 

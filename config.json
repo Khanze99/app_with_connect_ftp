@@ -1,7 +1,7 @@
 {
-  "host": "localhost",
+  "host": "127.0.0.1",
   "username": "user",
-  "password": "password",
-  "from_path": "path",
-  "to_path": "path"
+  "password": "user123",
+  "from_path": "",
+  "to_path": ""
 }
