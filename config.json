@@ -1,0 +1,7 @@
+{
+  "host": "localhost",
+  "username": "user",
+  "password": "password",
+  "from_path": "path",
+  "to_path": "path"
+}
