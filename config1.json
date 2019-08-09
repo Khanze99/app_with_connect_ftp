@@ -1,0 +1,7 @@
+{
+  "host": "127.0.0.1",
+  "username": "user",
+  "password": "user1",
+  "from_path": "path",
+  "to_path": "path"
+}
